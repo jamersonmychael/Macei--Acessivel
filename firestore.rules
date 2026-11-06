@@ -1,0 +1,43 @@
+// Regras de segurança do Firestore — cole na aba "Regras" do Firestore Database.
+// Qualquer pessoa pode LER os registros e CRIAR um registro válido.
+// O único update permitido é somar 1 apoio. Ninguém pode apagar nem editar o resto.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /registros/{registroId} {
+
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly([
+                         'tipo', 'titulo', 'descricao', 'bairro', 'cats', 'autor',
+                         'data', 'criadoEm', 'votos', 'lat', 'lng', 'fotos'
+                       ])
+                    && request.resource.data.tipo in ['sugestao', 'denuncia']
+                    && request.resource.data.titulo is string
+                    && request.resource.data.titulo.size() > 0
+                    && request.resource.data.titulo.size() <= 80
+                    && request.resource.data.descricao is string
+                    && request.resource.data.descricao.size() > 0
+                    && request.resource.data.descricao.size() <= 2000
+                    && request.resource.data.bairro is string
+                    && request.resource.data.bairro.size() <= 200
+                    && request.resource.data.autor is string
+                    && request.resource.data.autor.size() <= 60
+                    && request.resource.data.data is string
+                    && request.resource.data.cats is list
+                    && request.resource.data.cats.size() <= 4
+                    && request.resource.data.fotos is list
+                    && request.resource.data.fotos.size() <= 3
+                    && request.resource.data.votos == 0
+                    && request.resource.data.criadoEm == request.time
+                    && (request.resource.data.lat == null || request.resource.data.lat is number)
+                    && (request.resource.data.lng == null || request.resource.data.lng is number);
+
+      // Apoiar: só o campo "votos" muda, e só de 1 em 1 para cima
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['votos'])
+                    && request.resource.data.votos == resource.data.votos + 1;
+
+      allow delete: if false;
+    }
+  }
+}

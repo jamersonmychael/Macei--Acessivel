@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acessibilidade Urbana — Sugestões Comunitárias · Maceió</title>
+
+  <!-- Fontes do Google: Fraunces (títulos) + Inter (corpo de texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <!-- Leaflet: biblioteca de mapas interativos (open source, sem chave de API) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <!-- Firebase (versão compat): banco de dados Firestore compartilhado entre todos os visitantes -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+  <!-- Estilos do projeto -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!--
+       LIGHTBOX — modal para ampliar fotos
+  -->
+  <div class="lightbox" id="lightbox" onclick="fecharLightbox()">
+    <button class="lightbox-fechar" onclick="fecharLightbox()">✕</button>
+    <img id="lightbox-imagem" src="" alt="Foto ampliada"/>
+  </div>
+
+
+  <!--
+       NAVEGAÇÃO — barra fixa no topo
+  -->
+  <nav>
+    <div class="nav-interno">
+      <a href="#" class="nav-logo">Maceió <span>Acessível</span></a>
+      <ul class="nav-links">
+        <li><a href="#enviar">Enviar</a></li>
+        <li><a href="#registros-recentes">Ver registros</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+  <!--
+       HERO — seção de abertura com chamada principal
+       Foto de fundo: orla da Ponta Verde, Maceió (Wikimedia Commons)
+  -->
+  <section class="hero">
+    <!-- Foto de fundo da orla: definida no CSS (.hero-foto-fundo) com imagem local + imagem online de reserva -->
+    <div class="hero-foto-fundo" role="img" aria-label="Orla da Ponta Verde, em Maceió">
+      <!-- Overlay escuro em gradiente para manter o texto legível sobre a foto -->
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-conteudo">
+      <span class="hero-tag">Maceió · AL</span>
+      <h1>A cidade é de <em>todos.</em> Ajude a torná-la acessível de verdade.</h1>
+      <p class="hero-sub">
+        Traga suas ideias, aponte problemas e acompanhe o que a comunidade
+        está dizendo sobre acessibilidade nos bairros de Maceió.
+      </p>
+      <div class="hero-acoes">
+        <a href="#enviar" class="btn-primario">Fazer uma sugestão</a>
+        <a href="#enviar" class="btn-contorno">Registrar uma denúncia</a>
+      </div>
+    </div>
+    <!-- Onda decorativa que separa o hero do conteúdo abaixo -->
+    <svg class="hero-onda" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="#F7F4EF"/>
+    </svg>
+  </section>
+
+
+  <!--
+       FAIXA DE ESTATÍSTICAS — números em tempo real
+  -->
+  <div class="faixa-stats">
+    <div class="stats-interno">
+      <div class="stat-item">
+        <span class="stat-numero" id="count-sugestoes">0</span>
+        <span class="stat-rotulo">Sugestões registradas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero" id="count-denuncias">0</span>
+        <span class="stat-rotulo">Denúncias registradas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero" id="count-bairros">0</span>
+        <span class="stat-rotulo">Bairros mencionados</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-numero" id="count-votos">0</span>
+        <span class="stat-rotulo">Apoios da comunidade</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!--
+       GRID PRINCIPAL — formulário à esquerda, sidebar à direita
+  -->
+  <div class="grid-principal" id="enviar">
+
+    <!-- COLUNA ESQUERDA: formulário de envio -->
+    <div>
+      <div class="rotulo-secao">Participar</div>
+      <h2 class="titulo-secao">Compartilhe o que você vê</h2>
+
+      <div class="card-formulario">
+
+        <!-- Abas: Sugestão vs Denúncia -->
+        <div class="abas-tipo">
+          <button class="aba-tipo ativo" data-tipo="sugestao" onclick="trocarAba(this)">
+            💡 Sugestão de melhoria
+          </button>
+          <button class="aba-tipo" data-tipo="denuncia" onclick="trocarAba(this)">
+            🚨 Denúncia de problema
+          </button>
+        </div>
+
+        <!-- Mensagem de contexto — muda conforme a aba selecionada -->
+        <div id="msg-contexto-formulario" class="msg-contexto">
+          Tem alguma ideia de como um espaço público poderia ser mais inclusivo?
+          Calçada sem rampa, sinalização inadequada, falta de piso tátil? Conte pra gente.
+        </div>
+
+        <!-- Campo: título -->
+        <div class="campo">
+          <label for="input-titulo">Título</label>
+          <input id="input-titulo" type="text" placeholder="Descreva em poucas palavras" maxlength="80"/>
+        </div>
+
+        <!-- Campo: tipo de deficiência relacionada -->
+        <div class="campo">
+          <label>Tipo de deficiência relacionada</label>
+          <div class="grade-categorias">
+            <label class="opcao-categoria">
+              <input type="checkbox" value="fisica"/>
+              <span class="icone-categoria">🦽</span> Física / Motora
+            </label>
+            <label class="opcao-categoria">
+              <input type="checkbox" value="visual"/>
+              <span class="icone-categoria">👁️</span> Visual
+            </label>
+            <label class="opcao-categoria">
+              <input type="checkbox" value="auditiva"/>
+              <span class="icone-categoria">👂</span> Auditiva
+            </label>
+            <label class="opcao-categoria">
+              <input type="checkbox" value="multipla"/>
+              <span class="icone-categoria">♿</span> Múltipla / Geral
+            </label>
+          </div>
+        </div>
+
+        <!-- Campo: localização com busca e mapa interativo -->
+        <div class="campo">
+          <label for="input-localizacao">
+            Localização
+            <span class="dica-campo">(busque o endereço ou clique no mapa)</span>
+          </label>
+
+          <!-- Barra de busca com botão de pesquisa -->
+          <div class="wrap-busca-local">
+            <input
+              id="input-localizacao"
+              type="text"
+              placeholder="Ex: Av. Álvaro Otacílio, 1500, Pajuçara"
+              autocomplete="off"
+              oninput="aoDigitarLocal()"
+              onkeydown="aoTeclarLocal(event)"
+            />
+            <button class="btn-buscar-local" onclick="buscarLocalizacao()" title="Buscar">🔍</button>
+            <!-- Lista de sugestões de endereço (Nominatim) -->
+            <div class="sugestoes-local" id="sugestoes-local" style="display:none;"></div>
+          </div>
+
+          <!-- Mapa interativo Leaflet + OpenStreetMap -->
+          <div class="container-mapa">
+            <div id="mapa-formulario"></div>
+            <div class="dica-mapa" id="dica-mapa">Clique no mapa para marcar o local exato</div>
+          </div>
+
+          <!-- Tag exibida quando um local é selecionado -->
+          <div class="tag-local-selecionado" id="tag-local-selecionado" style="display:none;">
+            <span>📍</span>
+            <span id="texto-local-selecionado"></span>
+            <button class="btn-limpar-local" onclick="limparLocalizacao()">Remover</button>
+          </div>
+        </div>
+
+        <!-- Campo: descrição detalhada -->
+        <div class="campo">
+          <label for="input-descricao">Descrição</label>
+          <textarea
+            id="input-descricao"
+            maxlength="2000"
+            placeholder="Conte com mais detalhes: o que falta, o que está errado, ou o que poderia ser feito..."
+          ></textarea>
+        </div>
+
+        <!-- Campo: upload de fotos -->
+        <div class="campo">
+          <label>Fotos <span class="dica-campo">(opcional, até 3 imagens)</span></label>
+          <div class="area-upload-foto" id="area-upload">
+            <!-- Input file oculto; acionado pelo clique na área inteira -->
+            <input
+              type="file"
+              id="input-fotos"
+              accept="image/*"
+              multiple
+              onchange="processarFotos(event)"
+            />
+            <div class="icone-upload">📷</div>
+            <div class="label-upload">
+              <strong>Clique para adicionar fotos</strong> ou arraste aqui
+            </div>
+            <div class="limite-upload">JPG, PNG ou WEBP · as fotos são reduzidas automaticamente</div>
+          </div>
+          <!-- Miniaturas das fotos selecionadas -->
+          <div class="previews-fotos" id="previews-fotos"></div>
+        </div>
+
+        <!-- Campo: nome do autor (opcional) -->
+        <div class="campo">
+          <label for="input-nome">
+            Seu nome
+            <span style="color:var(--cinza);font-weight:400;">(opcional)</span>
+          </label>
+          <input id="input-nome" type="text" placeholder="Anônimo"/>
+        </div>
+
+        <button class="btn-enviar" onclick="enviarRegistro()">Enviar registro →</button>
+      </div>
+    </div><!-- /coluna esquerda -->
+
+
+    <!-- COLUNA DIREITA: sidebar com resumo e orientações -->
+    <aside class="sidebar" id="feed">
+
+      <!-- Card: temas mais citados -->
+      <div class="card-sidebar">
+        <h3>Temas mais citados</h3>
+        <ul class="lista-temas">
+          <li class="item-tema">
+            <span class="nome-tema">🦽 Calçadas e rampas</span>
+            <span class="contagem-tema" id="t-fisica">0</span>
+          </li>
+          <li class="item-tema">
+            <span class="nome-tema">👁️ Sinalização visual</span>
+            <span class="contagem-tema" id="t-visual">0</span>
+          </li>
+          <li class="item-tema">
+            <span class="nome-tema">👂 Acessos auditivos</span>
+            <span class="contagem-tema" id="t-auditiva">0</span>
+          </li>
+          <li class="item-tema">
+            <span class="nome-tema">♿ Acessibilidade geral</span>
+            <span class="contagem-tema" id="t-multipla">0</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Card: orientações sobre o que pode ser reportado -->
+      <div class="card-sidebar">
+        <h3>O que você pode reportar?</h3>
+        <div class="bloco-info">
+          <strong>Sugestões</strong>
+          Ideias de onde instalar rampas, piso tátil, sinalizações em Braille,
+          semáforos sonoros, banheiros adaptados e muito mais.
+        </div>
+        <div class="bloco-info bloco-info--denuncia">
+          <strong>Denúncias</strong>
+          Locais onde a acessibilidade foi implantada mas está danificada,
+          mal feita, bloqueada ou descontinuada.
+        </div>
+      </div>
+
+    </aside><!-- /sidebar -->
+  </div><!-- /grid-principal -->
+
+
+  <!--
+       FEED — lista de registros enviados pela comunidade
+  -->
+  <div class="secao-feed" id="registros-recentes">
+
+    <div class="cabecalho-feed">
+      <div>
+        <div class="rotulo-secao">Comunidade</div>
+        <h2 class="titulo-secao titulo-secao--sem-margem">Registros recentes</h2>
+      </div>
+      <!-- Filtros por tipo de registro -->
+      <div class="filtros-feed">
+        <button class="pílula-filtro ativo" data-filtro="todos"    onclick="filtrarFeed(this)">Todos</button>
+        <button class="pílula-filtro"        data-filtro="sugestao" onclick="filtrarFeed(this)">Sugestões</button>
+        <button class="pílula-filtro"        data-filtro="denuncia" onclick="filtrarFeed(this)">Denúncias</button>
+      </div>
+    </div>
+
+    <!-- Cards de registros — preenchidos via JavaScript -->
+    <div id="lista-registros"></div>
+
+    <!-- Estado vazio: exibido quando não há registros no filtro atual -->
+    <div id="estado-vazio" style="display:none;">
+      <div class="estado-vazio-icone">🌊</div>
+      <p class="estado-vazio-texto">Nenhum registro nessa categoria ainda. Seja o primeiro!</p>
+    </div>
+
+  </div><!-- /secao-feed -->
+
+
+  <!--
+       SOBRE — contexto e motivação do projeto
+  -->
+  <section class="secao-sobre" id="sobre">
+    <div class="sobre-interno">
+
+      <div class="sobre-texto">
+        <h2>Por que esse espaço existe</h2>
+        <p>
+          Maceió tem praias, história e gente boa. Mas ainda tem muito a evoluir quando
+          o assunto é garantir que todas as pessoas — com ou sem deficiência — possam
+          circular com dignidade pela cidade.
+        </p>
+        <p>
+          Esse site é um canal direto da comunidade para registrar o que falta e o que
+          precisa melhorar. As vozes daqui podem guiar decisões reais.
+        </p>
+      </div>
+
+      <div class="principios">
+        <div class="item-principio">
+          <h4>Calçadas e mobilidade</h4>
+          <p>Rampas ausentes, piso irregular, obstáculos em vias públicas que dificultam cadeirantes e pedestres com mobilidade reduzida.</p>
+        </div>
+        <div class="item-principio">
+          <h4>Sinalização e informação</h4>
+          <p>Semáforos sonoros, piso tátil, sinalizações em Braille, legendas e intérpretes de Libras em espaços públicos.</p>
+        </div>
+        <div class="item-principio">
+          <h4>Espaços e equipamentos</h4>
+          <p>Banheiros adaptados, vagas de estacionamento, acesso a praias, parques, unidades de saúde e transporte coletivo.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!--
+       RODAPÉ
+  -->
+  <footer>
+    <div class="rodape-interno">
+      <div class="rodape-marca">Maceió <span>Acessível</span></div>
+      <p class="rodape-nota">Iniciativa comunitária · Maceió, Alagoas · Foto do topo: André Lage Freitas / Wikimedia Commons</p>
+    </div>
+  </footer>
+
+
+  <!--
+       TOAST — notificação temporária de feedback
+  -->
+  <div class="toast" id="toast"></div>
+
+
+  <!-- Script principal do projeto -->
+  <script src="script.js"></script>
+
+</body>
+</html>

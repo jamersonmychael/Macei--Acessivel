@@ -1,0 +1,1291 @@
+/*
+   estilos.css — Maceió Acessível
+   Paleta: azul profundo + azul céu + laranja areia (tema litorâneo)
+   Tipografia: Fraunces (títulos display) + Inter (corpo de texto)
+*/
+
+
+/* 
+   VARIÁVEIS DE DESIGN 
+*/
+:root {
+  /* Cores principais */
+  --azul-profundo:  #1A4E7C;
+  --azul-ceu:       #4A8FBF;
+  --azul-claro:     #D6EAF5;
+  --laranja:        #F0A45D;
+  --laranja-claro:  #FEF0E0;
+  --areia:          #F7F4EF;
+  --cinza:          #6B7A8A;
+  --cinza-claro:    #E8ECF0;
+  --texto:          #1C2B3A;
+  --branco:         #FFFFFF;
+  --verde:          #2E7D52;
+}
+
+/*
+   RESET E BASE 
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--areia);
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+
+/*
+   NAVEGAÇÃO
+*/
+nav {
+  background: var(--branco);
+  border-bottom: 1px solid var(--cinza-claro);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-interno {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--azul-profundo);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.nav-logo span {
+  color: var(--laranja);
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--cinza);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--azul-profundo);
+}
+
+
+/*
+   HERO — seção principal de abertura
+*/
+.hero {
+  background-color: var(--azul-profundo);
+  position: relative;
+  overflow: hidden;
+  padding: 80px 24px 0;
+}
+
+/* ── Foto de fundo do hero ──
+   Duas camadas de imagem empilhadas:
+   1ª (por cima): arquivo local imagens/orla-maceio.jpg  → coloque sua própria foto aqui, se quiser
+   2ª (reserva):  foto da Ponta Verde no Wikimedia Commons → aparece se o arquivo local não existir
+   Se as duas falharem, o fundo azul-profundo do .hero continua valendo. */
+.hero-foto-fundo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    url("imagens/orla-maceio.jpg"),
+    url("https://commons.wikimedia.org/wiki/Special:FilePath/Ponta_Verde_Lighthouse_landscape_-_Macei%C3%B3,_Brazil_(edited).jpg?width=1600");
+  background-size: cover;
+  background-position: center 60%; /* enquadra a linha do horizonte da orla */
+  background-repeat: no-repeat;
+}
+
+/* ── Overlay: gradiente que escurece a foto para manter o texto legível ── */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  /* Da esquerda (mais escuro, onde fica o texto) para a direita (um pouco mais aberto) */
+  background: linear-gradient(
+    105deg,
+    rgba(10, 30, 55, 0.82) 0%,
+    rgba(10, 30, 55, 0.65) 55%,
+    rgba(10, 30, 55, 0.50) 100%
+  );
+}
+
+.hero-conteudo {
+  max-width: 1120px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2; /* fica acima da foto e do overlay */
+}
+
+.hero-tag {
+  display: inline-block;
+  background: rgba(240, 164, 93, 0.2);
+  color: var(--laranja);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 600;
+  color: var(--branco);
+  line-height: 1.15;
+  max-width: 640px;
+  letter-spacing: -0.03em;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--laranja);
+}
+
+.hero-sub {
+  margin-top: 20px;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 520px;
+  line-height: 1.65;
+}
+
+.hero-acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+}
+
+/* Onda decorativa na base do hero */
+.hero-onda {
+  display: block;
+  margin-top: 56px;
+  width: 100%;
+}
+
+
+/*
+   BOTÕES REUTILIZÁVEIS
+*/
+.btn-primario {
+  background: var(--laranja);
+  color: var(--branco);
+  border: none;
+  padding: 13px 26px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-block;
+}
+
+.btn-primario:hover {
+  background: #e0904a;
+  transform: translateY(-1px);
+}
+
+.btn-contorno {
+  background: transparent;
+  color: var(--branco);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  padding: 13px 26px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  display: inline-block;
+}
+
+.btn-contorno:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+
+/*
+   FAIXA DE ESTATÍSTICAS
+*/
+.faixa-stats {
+  background: var(--branco);
+  border-bottom: 1px solid var(--cinza-claro);
+}
+
+.stats-interno {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-numero {
+  font-family: 'Fraunces', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--azul-profundo);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.stat-rotulo {
+  font-size: 0.8rem;
+  color: var(--cinza);
+  font-weight: 500;
+}
+
+
+/*
+   GRID PRINCIPAL (formulário + sidebar)
+*/
+.grid-principal {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 24px;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Cabeçalhos de seção reutilizáveis */
+.rotulo-secao {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--azul-ceu);
+  margin-bottom: 8px;
+}
+
+.titulo-secao {
+  font-family: 'Fraunces', serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--texto);
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.titulo-secao--sem-margem {
+  margin-bottom: 0;
+}
+
+
+/*
+   CARD DO FORMULÁRIO
+*/
+.card-formulario {
+  background: var(--branco);
+  border-radius: 14px;
+  padding: 36px;
+  border: 1px solid var(--cinza-claro);
+}
+
+/* Abas: Sugestão / Denúncia */
+.abas-tipo {
+  display: flex;
+  background: var(--areia);
+  border-radius: 8px;
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.aba-tipo {
+  flex: 1;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cinza);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.aba-tipo.ativo {
+  background: var(--branco);
+  color: var(--azul-profundo);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Aba de denúncia ativa fica com cor laranja-avermelhado */
+.aba-tipo[data-tipo="denuncia"].ativo {
+  color: #C04B00;
+}
+
+/* Texto de contexto que muda conforme a aba selecionada */
+.msg-contexto {
+  font-size: 0.85rem;
+  color: var(--cinza);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* Campos do formulário */
+.campo {
+  margin-bottom: 18px;
+}
+
+.campo label {
+  display: block;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--texto);
+  margin-bottom: 6px;
+}
+
+/* Texto de dica dentro do label */
+.dica-campo {
+  font-size: 0.75rem;
+  color: var(--cinza);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  border: 1.5px solid var(--cinza-claro);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--texto);
+  background: var(--areia);
+  transition: border-color 0.2s, background 0.2s;
+  outline: none;
+  resize: vertical;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--azul-ceu);
+  background: var(--branco);
+}
+
+.campo textarea {
+  min-height: 110px;
+}
+
+/* Grade de seleção de categorias */
+.grade-categorias {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.opcao-categoria {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--cinza-claro);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--cinza);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  user-select: none;
+}
+
+/* Checkbox invisível, mas ainda focável pelo teclado (display:none o tornaria inacessível) */
+.opcao-categoria input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* Contorno visível quando a opção recebe foco pelo teclado */
+.opcao-categoria:focus-within {
+  outline: 2px solid var(--azul-ceu);
+  outline-offset: 2px;
+}
+
+.opcao-categoria:hover {
+  border-color: var(--azul-ceu);
+  color: var(--azul-profundo);
+}
+
+.opcao-categoria.selecionado {
+  border-color: var(--azul-ceu);
+  background: var(--azul-claro);
+  color: var(--azul-profundo);
+}
+
+.icone-categoria {
+  font-size: 1.1rem;
+}
+
+/* Botão de envio do formulário */
+.btn-enviar {
+  width: 100%;
+  background: var(--azul-profundo);
+  color: var(--branco);
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s, transform 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-enviar:hover {
+  background: #14406A;
+  transform: translateY(-1px);
+}
+
+
+/*
+   CAMPO DE LOCALIZAÇÃO
+*/
+.wrap-busca-local {
+  position: relative;
+}
+
+/* Espaço à direita para o botão de busca não sobrepor o texto */
+.wrap-busca-local input {
+  padding-right: 42px;
+}
+
+.btn-buscar-local {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--azul-ceu);
+  border: none;
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.btn-buscar-local:hover {
+  background: var(--azul-profundo);
+}
+
+/* Dropdown de sugestões de endereço */
+.sugestoes-local {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--branco);
+  border: 1.5px solid var(--cinza-claro);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  z-index: 500;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.item-sugestao-local {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--cinza-claro);
+  color: var(--texto);
+  transition: background 0.15s;
+}
+
+.item-sugestao-local:last-child {
+  border-bottom: none;
+}
+
+.item-sugestao-local:hover {
+  background: var(--azul-claro);
+}
+
+.sugestao-carregando {
+  padding: 12px 14px;
+  font-size: 0.83rem;
+  color: var(--cinza);
+  text-align: center;
+}
+
+
+/*
+   MAPA INTERATIVO
+*/
+.container-mapa {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid var(--cinza-claro);
+  height: 220px;
+  position: relative;
+  margin-top: 10px;
+}
+
+#mapa-formulario {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* Dica flutuante sobre o mapa */
+.dica-mapa {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 78, 124, 0.85);
+  color: white;
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+/* Tag exibida quando um local está selecionado */
+.tag-local-selecionado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: var(--verde);
+  font-weight: 500;
+}
+
+.btn-limpar-local {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--cinza);
+  cursor: pointer;
+  background: var(--cinza-claro);
+  border: none;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s;
+}
+
+.btn-limpar-local:hover {
+  background: #d0d5db;
+}
+
+
+/*
+   UPLOAD DE FOTOS
+*/
+.area-upload-foto {
+  border: 2px dashed var(--cinza-claro);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: var(--areia);
+  position: relative;
+}
+
+.area-upload-foto:hover,
+.area-upload-foto.arrastando {
+  border-color: var(--azul-ceu);
+  background: var(--azul-claro);
+}
+
+/* Input file invisível cobre toda a área de upload */
+.area-upload-foto input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.icone-upload {
+  font-size: 1.6rem;
+  margin-bottom: 6px;
+}
+
+.label-upload {
+  font-size: 0.85rem;
+  color: var(--cinza);
+  line-height: 1.4;
+}
+
+.label-upload strong {
+  color: var(--azul-ceu);
+}
+
+.limite-upload {
+  font-size: 0.72rem;
+  color: var(--cinza);
+  margin-top: 4px;
+}
+
+/* Grade de miniaturas das fotos selecionadas */
+.previews-fotos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.miniatura-foto {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid var(--cinza-claro);
+}
+
+.miniatura-foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-remover-foto {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.btn-remover-foto:hover {
+  background: rgba(180, 0, 0, 0.8);
+}
+
+
+/*
+   SIDEBAR
+*/
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-sidebar {
+  background: var(--branco);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid var(--cinza-claro);
+}
+
+.card-sidebar h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--texto);
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
+}
+
+/* Lista de temas mais citados */
+.lista-temas {
+  list-style: none;
+}
+
+.item-tema {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cinza-claro);
+  font-size: 0.85rem;
+}
+
+.item-tema:last-child {
+  border-bottom: none;
+}
+
+.nome-tema {
+  color: var(--texto);
+  font-weight: 500;
+}
+
+.contagem-tema {
+  font-size: 0.75rem;
+  color: var(--branco);
+  background: var(--azul-ceu);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Blocos de informação na sidebar */
+.bloco-info {
+  background: var(--azul-claro);
+  border-radius: 10px;
+  padding: 18px;
+  font-size: 0.85rem;
+  color: var(--azul-profundo);
+  line-height: 1.6;
+}
+
+.bloco-info strong {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* Variante laranja para denúncias */
+.bloco-info--denuncia {
+  margin-top: 10px;
+  background: var(--laranja-claro);
+  color: #6B3500;
+}
+
+
+/*
+   FEED DE REGISTROS
+*/
+.secao-feed {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+
+.cabecalho-feed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filtros-feed {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pílula-filtro {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1.5px solid var(--cinza-claro);
+  background: var(--branco);
+  color: var(--cinza);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.pílula-filtro.ativo,
+.pílula-filtro:hover {
+  border-color: var(--azul-ceu);
+  color: var(--azul-profundo);
+  background: var(--azul-claro);
+}
+
+.pílula-filtro[data-filtro="denuncia"].ativo {
+  border-color: #F0A45D;
+  color: #8B4C00;
+  background: var(--laranja-claro);
+}
+
+/* Cards individuais de registro */
+.card-registro {
+  background: var(--branco);
+  border-radius: 12px;
+  padding: 22px 24px;
+  border: 1px solid var(--cinza-claro);
+  margin-bottom: 14px;
+  transition: box-shadow 0.2s;
+}
+
+.card-registro:hover {
+  box-shadow: 0 4px 16px rgba(26, 78, 124, 0.08);
+}
+
+.registro-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+/* Badge de tipo (sugestão / denúncia) */
+.badge-tipo {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.badge-tipo--sugestao {
+  background: var(--azul-claro);
+  color: var(--azul-profundo);
+}
+
+.badge-tipo--denuncia {
+  background: var(--laranja-claro);
+  color: #8B4C00;
+}
+
+.registro-meta {
+  font-size: 0.78rem;
+  color: var(--cinza);
+}
+
+/* Tags de categoria dentro do card */
+.registro-categorias {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.tag-categoria {
+  font-size: 0.75rem;
+  color: var(--cinza);
+  background: var(--areia);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.registro-titulo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--texto);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.registro-descricao {
+  font-size: 0.875rem;
+  color: var(--cinza);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+/* Fotos em miniatura no card do registro */
+.registro-fotos {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.foto-registro {
+  width: 72px;
+  height: 72px;
+  border-radius: 7px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 1.5px solid var(--cinza-claro);
+  transition: transform 0.15s;
+}
+
+.foto-registro:hover {
+  transform: scale(1.05);
+}
+
+/* Indicador de fotos extras além das 4 visíveis */
+.fotos-extras {
+  width: 72px;
+  height: 72px;
+  border-radius: 7px;
+  background: var(--cinza-claro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--cinza);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Link para ver no mapa */
+.link-ver-mapa {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--azul-ceu);
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.link-ver-mapa:hover {
+  color: var(--azul-profundo);
+  text-decoration: underline;
+}
+
+/* Rodapé do card: localização + botão de apoio */
+.registro-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cinza-claro);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.registro-local {
+  font-size: 0.78rem;
+  color: var(--azul-ceu);
+  font-weight: 500;
+}
+
+.area-votos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-apoiar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: var(--cinza);
+  background: none;
+  border: 1.5px solid var(--cinza-claro);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-apoiar:hover,
+.btn-apoiar.apoiado {
+  border-color: var(--laranja);
+  color: var(--laranja);
+  background: var(--laranja-claro);
+}
+
+/* Estado vazio do feed */
+.estado-vazio-icone {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.estado-vazio-texto {
+  font-size: 0.9rem;
+  color: var(--cinza);
+  text-align: center;
+}
+
+
+/*
+   LIGHTBOX — visualizador de fotos
+*/
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.lightbox.aberto {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lightbox img {
+  max-width: 90vw;
+  max-height: 85vh;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-fechar {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+
+/*
+   SEÇÃO SOBRE
+*/
+.secao-sobre {
+  background: var(--azul-profundo);
+  padding: 72px 24px;
+}
+
+.sobre-interno {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.sobre-texto h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--branco);
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.sobre-texto p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.principios {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item-principio {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.item-principio h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--laranja);
+  margin-bottom: 4px;
+}
+
+.item-principio p {
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  line-height: 1.5;
+}
+
+
+/*
+   RODAPÉ
+*/
+footer {
+  background: var(--branco);
+  border-top: 1px solid var(--cinza-claro);
+  padding: 36px 24px;
+}
+
+.rodape-interno {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.rodape-marca {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--azul-profundo);
+}
+
+.rodape-marca span {
+  color: var(--laranja);
+}
+
+.rodape-nota {
+  font-size: 0.8rem;
+  color: var(--cinza);
+}
+
+
+/*
+   TOAST — notificação temporária
+*/
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--azul-profundo);
+  color: var(--branco);
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  z-index: 999;
+  max-width: 320px;
+}
+
+.toast.visivel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/*
+   RESPONSIVIDADE
+*/
+
+/* Tablet: colapsa o grid em coluna única */
+@media (max-width: 860px) {
+  .grid-principal {
+    grid-template-columns: 1fr;
+  }
+
+  .sobre-interno {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  /* Sidebar sobe para antes do formulário em telas menores */
+  .sidebar {
+    order: -1;
+  }
+}
+
+/* Mobile: ajustes de espaçamento e layout */
+@media (max-width: 560px) {
+  .nav-links {
+    display: none; /* Menu oculto em mobile (sem hamburger por simplicidade) */
+  }
+
+  .hero {
+    padding: 60px 20px 0;
+  }
+
+  .card-formulario {
+    padding: 24px 20px;
+  }
+
+  /* Categorias em coluna única no mobile */
+  .grade-categorias {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-interno {
+    gap: 24px;
+  }
+}
+
+
+/*
+   ESTADOS DE CARREGAMENTO E AVISOS
+*/
+
+/* Aviso mostrado no lugar da lista (carregando, banco não configurado, erro) */
+.aviso-status {
+  background: var(--azul-claro);
+  color: var(--azul-profundo);
+  border-radius: 12px;
+  padding: 20px 24px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* Botão de envio enquanto o registro está sendo salvo */
+.btn-enviar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+/* Botão "Apoiar" depois que a pessoa já apoiou */
+.btn-apoiar:disabled {
+  cursor: default;
+}
