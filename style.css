@@ -1,22 +1,25 @@
-/*
+/* 
    estilos.css — Maceió Acessível
    Paleta: azul profundo + azul céu + laranja areia (tema litorâneo)
    Tipografia: Fraunces (títulos display) + Inter (corpo de texto)
 */
 
 
-/* 
-   VARIÁVEIS DE DESIGN 
+/*
+   VARIÁVEIS DE DESIGN  
 */
 :root {
   /* Cores principais */
   --azul-profundo:  #1A4E7C;
-  --azul-ceu:       #4A8FBF;
+  --azul-ceu:       #4A8FBF; /* só para bordas e detalhes (contraste baixo para texto) */
+  --azul-texto:     #276594; /* azul para TEXTO e para fundos com texto branco */
+  --laranja-escuro: #9C4F00; /* laranja para TEXTO sobre fundo claro */
+  --laranja-sobre-escuro: #FFC58F; /* laranja para TEXTO sobre fundo azul escuro */
   --azul-claro:     #D6EAF5;
   --laranja:        #F0A45D;
   --laranja-claro:  #FEF0E0;
   --areia:          #F7F4EF;
-  --cinza:          #6B7A8A;
+  --cinza:          #566676;
   --cinza-claro:    #E8ECF0;
   --texto:          #1C2B3A;
   --branco:         #FFFFFF;
@@ -44,7 +47,7 @@ body {
 }
 
 
-/*
+/* 
    NAVEGAÇÃO
 */
 nav {
@@ -75,7 +78,7 @@ nav {
 }
 
 .nav-logo span {
-  color: var(--laranja);
+  color: var(--laranja-escuro);
 }
 
 .nav-links {
@@ -97,7 +100,7 @@ nav {
 }
 
 
-/*
+/* 
    HERO — seção principal de abertura
 */
 .hero {
@@ -109,8 +112,8 @@ nav {
 
 /* ── Foto de fundo do hero ──
    Duas camadas de imagem empilhadas:
-   1ª (por cima): arquivo local imagens/orla-maceio.jpg  → coloque sua própria foto aqui, se quiser
-   2ª (reserva):  foto da Ponta Verde no Wikimedia Commons → aparece se o arquivo local não existir
+   1ª (por cima): arquivo local imagens/orla-maceio.jpg  - coloque sua própria foto aqui, se quiser
+   2ª (reserva):  foto da Ponta Verde no Wikimedia Commons - aparece se o arquivo local não existir
    Se as duas falharem, o fundo azul-profundo do .hero continua valendo. */
 .hero-foto-fundo {
   position: absolute;
@@ -146,8 +149,8 @@ nav {
 
 .hero-tag {
   display: inline-block;
-  background: rgba(240, 164, 93, 0.2);
-  color: var(--laranja);
+  background: #0F3254; /* fundo sólido: o contraste não depende da foto que aparece atrás */
+  color: var(--laranja-sobre-escuro);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -195,12 +198,12 @@ nav {
 }
 
 
-/*
+/* 
    BOTÕES REUTILIZÁVEIS
 */
 .btn-primario {
   background: var(--laranja);
-  color: var(--branco);
+  color: var(--texto); /* texto escuro: o branco não passava no contraste sobre o laranja */
   border: none;
   padding: 13px 26px;
   border-radius: 8px;
@@ -237,7 +240,7 @@ nav {
 }
 
 
-/*
+/* 
    FAIXA DE ESTATÍSTICAS
 */
 .faixa-stats {
@@ -276,7 +279,7 @@ nav {
 }
 
 
-/*
+/* 
    GRID PRINCIPAL (formulário + sidebar)
 */
 .grid-principal {
@@ -295,7 +298,7 @@ nav {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--azul-ceu);
+  color: var(--azul-texto);
   margin-bottom: 8px;
 }
 
@@ -313,7 +316,7 @@ nav {
 }
 
 
-/*
+/* 
    CARD DO FORMULÁRIO
 */
 .card-formulario {
@@ -448,7 +451,7 @@ nav {
 
 /* Contorno visível quando a opção recebe foco pelo teclado */
 .opcao-categoria:focus-within {
-  outline: 2px solid var(--azul-ceu);
+  outline: 2px solid var(--azul-texto);
   outline-offset: 2px;
 }
 
@@ -489,7 +492,7 @@ nav {
 }
 
 
-/*
+/* 
    CAMPO DE LOCALIZAÇÃO
 */
 .wrap-busca-local {
@@ -506,7 +509,7 @@ nav {
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--azul-ceu);
+  background: var(--azul-texto);
   border: none;
   border-radius: 6px;
   width: 28px;
@@ -564,7 +567,7 @@ nav {
 }
 
 
-/*
+/* 
    MAPA INTERATIVO
 */
 .container-mapa {
@@ -627,7 +630,7 @@ nav {
 }
 
 
-/*
+/* 
    UPLOAD DE FOTOS
 */
 .area-upload-foto {
@@ -670,7 +673,7 @@ nav {
 }
 
 .label-upload strong {
-  color: var(--azul-ceu);
+  color: var(--azul-texto);
 }
 
 .limite-upload {
@@ -725,7 +728,7 @@ nav {
 }
 
 
-/*
+/* 
    SIDEBAR
 */
 .sidebar {
@@ -776,7 +779,7 @@ nav {
 .contagem-tema {
   font-size: 0.75rem;
   color: var(--branco);
-  background: var(--azul-ceu);
+  background: var(--azul-texto);
   padding: 2px 8px;
   border-radius: 20px;
   font-weight: 600;
@@ -806,7 +809,7 @@ nav {
 }
 
 
-/*
+/* 
    FEED DE REGISTROS
 */
 .secao-feed {
@@ -979,7 +982,7 @@ nav {
   align-items: center;
   gap: 4px;
   font-size: 0.78rem;
-  color: var(--azul-ceu);
+  color: var(--azul-texto);
   font-weight: 500;
   text-decoration: none;
   margin-top: 4px;
@@ -1004,7 +1007,7 @@ nav {
 
 .registro-local {
   font-size: 0.78rem;
-  color: var(--azul-ceu);
+  color: var(--azul-texto);
   font-weight: 500;
 }
 
@@ -1032,7 +1035,7 @@ nav {
 .btn-apoiar:hover,
 .btn-apoiar.apoiado {
   border-color: var(--laranja);
-  color: var(--laranja);
+  color: var(--laranja-escuro);
   background: var(--laranja-claro);
 }
 
@@ -1050,7 +1053,7 @@ nav {
 }
 
 
-/*
+/* 
    LIGHTBOX — visualizador de fotos
 */
 .lightbox {
@@ -1062,12 +1065,14 @@ nav {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden; /* fechado: fora da ordem de Tab e invisível para leitores de tela */
   pointer-events: none;
-  transition: opacity 0.25s;
+  transition: opacity 0.25s, visibility 0.25s;
 }
 
 .lightbox.aberto {
   opacity: 1;
+  visibility: visible;
   pointer-events: all;
 }
 
@@ -1092,7 +1097,7 @@ nav {
 }
 
 
-/*
+/* 
    SEÇÃO SOBRE
 */
 .secao-sobre {
@@ -1139,10 +1144,10 @@ nav {
   padding: 16px 18px;
 }
 
-.item-principio h4 {
+.item-principio h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--laranja);
+  color: var(--laranja-sobre-escuro);
   margin-bottom: 4px;
 }
 
@@ -1154,7 +1159,7 @@ nav {
 }
 
 
-/*
+/* 
    RODAPÉ
 */
 footer {
@@ -1181,7 +1186,7 @@ footer {
 }
 
 .rodape-marca span {
-  color: var(--laranja);
+  color: var(--laranja-escuro);
 }
 
 .rodape-nota {
@@ -1190,7 +1195,7 @@ footer {
 }
 
 
-/*
+/* 
    TOAST — notificação temporária
 */
 .toast {
@@ -1218,7 +1223,7 @@ footer {
 }
 
 
-/*
+/* 
    RESPONSIVIDADE
 */
 
@@ -1264,7 +1269,7 @@ footer {
 }
 
 
-/*
+/* 
    ESTADOS DE CARREGAMENTO E AVISOS
 */
 
@@ -1288,4 +1293,98 @@ footer {
 /* Botão "Apoiar" depois que a pessoa já apoiou */
 .btn-apoiar:disabled {
   cursor: default;
+}
+
+
+/* 
+   ACESSIBILIDADE
+*/
+
+/* Link "Pular para o conteúdo": só aparece quando recebe foco pelo teclado */
+.pular-conteudo {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 3000;
+  background: var(--azul-profundo);
+  color: var(--branco);
+  padding: 10px 16px;
+  border-radius: 0 0 8px 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.15s;
+}
+
+.pular-conteudo:focus {
+  top: 0;
+}
+
+main:focus {
+  outline: none; /* o main só recebe foco ao seguir o link acima */
+}
+
+/* Contorno de foco visível em tudo que é clicável */
+:focus-visible {
+  outline: 3px solid var(--azul-profundo);
+  outline-offset: 2px;
+}
+
+/* Sobre fundos escuros o contorno fica branco */
+.hero :focus-visible,
+.secao-sobre :focus-visible,
+.lightbox :focus-visible {
+  outline-color: var(--branco);
+}
+
+/* Campos de texto: tinham outline:none; o contorno volta no foco por teclado */
+.campo input:focus-visible,
+.campo textarea:focus-visible {
+  outline: 2px solid var(--azul-texto);
+  outline-offset: 1px;
+}
+
+/* Área de upload: o input é invisível, então o contorno vai na área toda */
+.area-upload-foto:focus-within {
+  outline: 2px solid var(--azul-texto);
+  outline-offset: 2px;
+}
+
+/* Grupo de categorias (fieldset + legend) com a mesma aparência de antes */
+fieldset.campo {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+  min-width: 0;
+}
+
+.campo legend {
+  display: block;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--texto);
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+/* Foto do registro agora é um botão, para abrir também pelo teclado */
+.btn-foto {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 7px;
+  line-height: 0;
+}
+
+/* Quem prefere menos movimento no sistema não recebe animações */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

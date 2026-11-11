@@ -23,16 +23,19 @@
 </head>
 <body>
 
-  <!--
+  <!-- Link para quem usa teclado ou leitor de tela pular direto ao conteúdo -->
+  <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- 
        LIGHTBOX — modal para ampliar fotos
   -->
-  <div class="lightbox" id="lightbox" onclick="fecharLightbox()">
-    <button class="lightbox-fechar" onclick="fecharLightbox()">✕</button>
-    <img id="lightbox-imagem" src="" alt="Foto ampliada"/>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada" onclick="fecharLightbox()">
+    <button class="lightbox-fechar" id="lightbox-fechar" type="button" aria-label="Fechar foto ampliada" onclick="fecharLightbox()">✕</button>
+    <img id="lightbox-imagem" src="" alt="Foto anexada ao registro, ampliada"/>
   </div>
 
 
-  <!--
+  <!-- 
        NAVEGAÇÃO — barra fixa no topo
   -->
   <nav>
@@ -47,10 +50,12 @@
   </nav>
 
 
-  <!--
+  <!-- 
        HERO — seção de abertura com chamada principal
        Foto de fundo: orla da Ponta Verde, Maceió (Wikimedia Commons)
   -->
+  <main id="conteudo" tabindex="-1">
+
   <section class="hero">
     <!-- Foto de fundo da orla: definida no CSS (.hero-foto-fundo) com imagem local + imagem online de reserva -->
     <div class="hero-foto-fundo" role="img" aria-label="Orla da Ponta Verde, em Maceió">
@@ -77,7 +82,7 @@
   </section>
 
 
-  <!--
+  <!-- 
        FAIXA DE ESTATÍSTICAS — números em tempo real
   -->
   <div class="faixa-stats">
@@ -102,7 +107,7 @@
   </div>
 
 
-  <!--
+  <!-- 
        GRID PRINCIPAL — formulário à esquerda, sidebar à direita
   -->
   <div class="grid-principal" id="enviar">
@@ -115,12 +120,12 @@
       <div class="card-formulario">
 
         <!-- Abas: Sugestão vs Denúncia -->
-        <div class="abas-tipo">
-          <button class="aba-tipo ativo" data-tipo="sugestao" onclick="trocarAba(this)">
-            💡 Sugestão de melhoria
+        <div class="abas-tipo" role="group" aria-label="Tipo de registro">
+          <button class="aba-tipo ativo" data-tipo="sugestao" aria-pressed="true" onclick="trocarAba(this)">
+            <span aria-hidden="true">💡</span> Sugestão de melhoria
           </button>
-          <button class="aba-tipo" data-tipo="denuncia" onclick="trocarAba(this)">
-            🚨 Denúncia de problema
+          <button class="aba-tipo" data-tipo="denuncia" aria-pressed="false" onclick="trocarAba(this)">
+            <span aria-hidden="true">🚨</span> Denúncia de problema
           </button>
         </div>
 
@@ -137,27 +142,27 @@
         </div>
 
         <!-- Campo: tipo de deficiência relacionada -->
-        <div class="campo">
-          <label>Tipo de deficiência relacionada</label>
+        <fieldset class="campo">
+          <legend>Tipo de deficiência relacionada <span class="dica-campo">(marque uma ou mais)</span></legend>
           <div class="grade-categorias">
             <label class="opcao-categoria">
               <input type="checkbox" value="fisica"/>
-              <span class="icone-categoria">🦽</span> Física / Motora
+              <span class="icone-categoria" aria-hidden="true">🦽</span> Física / Motora
             </label>
             <label class="opcao-categoria">
               <input type="checkbox" value="visual"/>
-              <span class="icone-categoria">👁️</span> Visual
+              <span class="icone-categoria" aria-hidden="true">👁️</span> Visual
             </label>
             <label class="opcao-categoria">
               <input type="checkbox" value="auditiva"/>
-              <span class="icone-categoria">👂</span> Auditiva
+              <span class="icone-categoria" aria-hidden="true">👂</span> Auditiva
             </label>
             <label class="opcao-categoria">
               <input type="checkbox" value="multipla"/>
-              <span class="icone-categoria">♿</span> Múltipla / Geral
+              <span class="icone-categoria" aria-hidden="true">♿</span> Múltipla / Geral
             </label>
           </div>
-        </div>
+        </fieldset>
 
         <!-- Campo: localização com busca e mapa interativo -->
         <div class="campo">
@@ -183,13 +188,13 @@
 
           <!-- Mapa interativo Leaflet + OpenStreetMap -->
           <div class="container-mapa">
-            <div id="mapa-formulario"></div>
+            <div id="mapa-formulario" role="region" aria-label="Mapa para marcar o local. Quem usa teclado ou leitor de tela pode informar o endereço no campo de busca acima."></div>
             <div class="dica-mapa" id="dica-mapa">Clique no mapa para marcar o local exato</div>
           </div>
 
           <!-- Tag exibida quando um local é selecionado -->
           <div class="tag-local-selecionado" id="tag-local-selecionado" style="display:none;">
-            <span>📍</span>
+            <span aria-hidden="true">📍</span>
             <span id="texto-local-selecionado"></span>
             <button class="btn-limpar-local" onclick="limparLocalizacao()">Remover</button>
           </div>
@@ -207,7 +212,7 @@
 
         <!-- Campo: upload de fotos -->
         <div class="campo">
-          <label>Fotos <span class="dica-campo">(opcional, até 3 imagens)</span></label>
+          <label for="input-fotos">Fotos <span class="dica-campo">(opcional, até 3 imagens)</span></label>
           <div class="area-upload-foto" id="area-upload">
             <!-- Input file oculto; acionado pelo clique na área inteira -->
             <input
@@ -217,7 +222,7 @@
               multiple
               onchange="processarFotos(event)"
             />
-            <div class="icone-upload">📷</div>
+            <div class="icone-upload" aria-hidden="true">📷</div>
             <div class="label-upload">
               <strong>Clique para adicionar fotos</strong> ou arraste aqui
             </div>
@@ -249,19 +254,19 @@
         <h3>Temas mais citados</h3>
         <ul class="lista-temas">
           <li class="item-tema">
-            <span class="nome-tema">🦽 Calçadas e rampas</span>
+            <span class="nome-tema"><span aria-hidden="true">🦽</span> Calçadas e rampas</span>
             <span class="contagem-tema" id="t-fisica">0</span>
           </li>
           <li class="item-tema">
-            <span class="nome-tema">👁️ Sinalização visual</span>
+            <span class="nome-tema"><span aria-hidden="true">👁️</span> Sinalização visual</span>
             <span class="contagem-tema" id="t-visual">0</span>
           </li>
           <li class="item-tema">
-            <span class="nome-tema">👂 Acessos auditivos</span>
+            <span class="nome-tema"><span aria-hidden="true">👂</span> Acessos auditivos</span>
             <span class="contagem-tema" id="t-auditiva">0</span>
           </li>
           <li class="item-tema">
-            <span class="nome-tema">♿ Acessibilidade geral</span>
+            <span class="nome-tema"><span aria-hidden="true">♿</span> Acessibilidade geral</span>
             <span class="contagem-tema" id="t-multipla">0</span>
           </li>
         </ul>
@@ -286,7 +291,7 @@
   </div><!-- /grid-principal -->
 
 
-  <!--
+  <!-- 
        FEED — lista de registros enviados pela comunidade
   -->
   <div class="secao-feed" id="registros-recentes">
@@ -297,10 +302,10 @@
         <h2 class="titulo-secao titulo-secao--sem-margem">Registros recentes</h2>
       </div>
       <!-- Filtros por tipo de registro -->
-      <div class="filtros-feed">
-        <button class="pílula-filtro ativo" data-filtro="todos"    onclick="filtrarFeed(this)">Todos</button>
-        <button class="pílula-filtro"        data-filtro="sugestao" onclick="filtrarFeed(this)">Sugestões</button>
-        <button class="pílula-filtro"        data-filtro="denuncia" onclick="filtrarFeed(this)">Denúncias</button>
+      <div class="filtros-feed" role="group" aria-label="Filtrar registros por tipo">
+        <button class="pílula-filtro ativo" data-filtro="todos" aria-pressed="true"    onclick="filtrarFeed(this)">Todos</button>
+        <button class="pílula-filtro"        data-filtro="sugestao" aria-pressed="false" onclick="filtrarFeed(this)">Sugestões</button>
+        <button class="pílula-filtro"        data-filtro="denuncia" aria-pressed="false" onclick="filtrarFeed(this)">Denúncias</button>
       </div>
     </div>
 
@@ -309,14 +314,14 @@
 
     <!-- Estado vazio: exibido quando não há registros no filtro atual -->
     <div id="estado-vazio" style="display:none;">
-      <div class="estado-vazio-icone">🌊</div>
+      <div class="estado-vazio-icone" aria-hidden="true">🌊</div>
       <p class="estado-vazio-texto">Nenhum registro nessa categoria ainda. Seja o primeiro!</p>
     </div>
 
   </div><!-- /secao-feed -->
 
 
-  <!--
+  <!-- 
        SOBRE — contexto e motivação do projeto
   -->
   <section class="secao-sobre" id="sobre">
@@ -337,15 +342,15 @@
 
       <div class="principios">
         <div class="item-principio">
-          <h4>Calçadas e mobilidade</h4>
+          <h3>Calçadas e mobilidade</h3>
           <p>Rampas ausentes, piso irregular, obstáculos em vias públicas que dificultam cadeirantes e pedestres com mobilidade reduzida.</p>
         </div>
         <div class="item-principio">
-          <h4>Sinalização e informação</h4>
+          <h3>Sinalização e informação</h3>
           <p>Semáforos sonoros, piso tátil, sinalizações em Braille, legendas e intérpretes de Libras em espaços públicos.</p>
         </div>
         <div class="item-principio">
-          <h4>Espaços e equipamentos</h4>
+          <h3>Espaços e equipamentos</h3>
           <p>Banheiros adaptados, vagas de estacionamento, acesso a praias, parques, unidades de saúde e transporte coletivo.</p>
         </div>
       </div>
@@ -354,9 +359,11 @@
   </section>
 
 
-  <!--
+  <!-- 
        RODAPÉ
   -->
+  </main>
+
   <footer>
     <div class="rodape-interno">
       <div class="rodape-marca">Maceió <span>Acessível</span></div>
@@ -365,10 +372,10 @@
   </footer>
 
 
-  <!--
+  <!-- 
        TOAST — notificação temporária de feedback
   -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 
   <!-- Script principal do projeto -->

@@ -1,4 +1,4 @@
-/*
+/* 
    script.js — Maceió Acessível (versão com Firebase / Firestore)
 
    O que este arquivo faz:
@@ -52,10 +52,10 @@ const CHAVE_APOIOS_LOCAL   = 'mac-apoios';     // guarda no navegador quais regi
 
 // Mapeamento de código de categoria para rótulo exibido
 const ROTULOS_CATEGORIA = {
-  fisica:   '🦽 Física',
-  visual:   '👁️ Visual',
-  auditiva: '👂 Auditiva',
-  multipla: '♿ Geral'
+  fisica:   { icone: '🦽', texto: 'Física' },
+  visual:   { icone: '👁️', texto: 'Visual' },
+  auditiva: { icone: '👂', texto: 'Auditiva' },
+  multipla: { icone: '♿', texto: 'Geral' }
 };
 const CATEGORIAS_VALIDAS = Object.keys(ROTULOS_CATEGORIA);
 
@@ -63,7 +63,7 @@ const CATEGORIAS_VALIDAS = Object.keys(ROTULOS_CATEGORIA);
 const PADRAO_FOTO_VALIDA = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 
 
-/*
+/* 
    ESTADO GLOBAL DA APLICAÇÃO
 */
 
@@ -100,11 +100,11 @@ let timerDebounceLocal;
 let enviandoRegistro = false;
 
 
-/*
+/* 
    FIREBASE / FIRESTORE
 */
 
-/** Confere se o firebaseConfig foi preenchido. */
+/** Confere se o firebaseConfig foi preenchido */
 function firebaseConfigurado() {
   return ['apiKey', 'projectId', 'appId'].every(chave => {
     const valor = CONFIGURACAO_FIREBASE[chave];
@@ -193,7 +193,7 @@ function normalizarRegistro(id, dados) {
 }
 
 
-/*
+/* 
    MAPA INTERATIVO (Leaflet)
 */
 
@@ -265,7 +265,7 @@ function limparLocalizacao() {
 }
 
 
-/*
+/* 
    BUSCA DE ENDEREÇOS (Nominatim / OpenStreetMap)
 */
 
@@ -496,8 +496,8 @@ function removerFoto(indice) {
 function renderizarPreviewsFotos() {
   document.getElementById('previews-fotos').innerHTML = fotosCarregadas.map((foto, i) => `
     <div class="miniatura-foto">
-      <img src="${foto.dataUrl}" alt="${escaparHtml(foto.nome)}"/>
-      <button class="btn-remover-foto" data-acao="remover-foto" data-indice="${i}" title="Remover">✕</button>
+      <img src="${foto.dataUrl}" alt="Foto ${i + 1} selecionada"/>
+      <button type="button" class="btn-remover-foto" data-acao="remover-foto" data-indice="${i}" aria-label="Remover foto ${i + 1}">✕</button>
     </div>
   `).join('');
 }
@@ -508,14 +508,18 @@ document.getElementById('previews-fotos').addEventListener('click', (evento) => 
 });
 
 
-/*
+/* 
    ABAS E CATEGORIAS DO FORMULÁRIO
 */
 
 /** Alterna entre "Sugestão" e "Denúncia" e troca o texto de apoio. */
 function trocarAba(botao) {
-  document.querySelectorAll('.aba-tipo').forEach(t => t.classList.remove('ativo'));
+  document.querySelectorAll('.aba-tipo').forEach(t => {
+    t.classList.remove('ativo');
+    t.setAttribute('aria-pressed', 'false'); // informa ao leitor de tela qual aba está ativa
+  });
   botao.classList.add('ativo');
+  botao.setAttribute('aria-pressed', 'true');
   abaAtiva = botao.dataset.tipo;
 
   document.getElementById('msg-contexto-formulario').textContent = abaAtiva === 'denuncia'
@@ -539,7 +543,7 @@ document.querySelector('.grade-categorias').addEventListener('change', (evento) 
 });
 
 
-/*
+/* 
    ENVIO DO REGISTRO (grava no Firestore)
 */
 
@@ -643,7 +647,7 @@ async function enviarRegistro() {
 }
 
 
-/*
+/* 
    APOIOS (VOTOS)
 */
 
@@ -694,28 +698,53 @@ async function apoiarRegistro(id) {
 }
 
 
-/*
+/* 
    FILTRO DO FEED E LIGHTBOX
 */
 
 function filtrarFeed(botao) {
-  document.querySelectorAll('.pílula-filtro').forEach(p => p.classList.remove('ativo'));
+  document.querySelectorAll('.pílula-filtro').forEach(p => {
+    p.classList.remove('ativo');
+    p.setAttribute('aria-pressed', 'false');
+  });
   botao.classList.add('ativo');
+  botao.setAttribute('aria-pressed', 'true');
   filtroAtivo = botao.dataset.filtro;
   renderizarFeed();
 }
 
-function abrirLightbox(src) {
+// Guarda quem tinha o foco antes de abrir a foto, para devolver o foco ao fechar
+let elementoComFocoAntesDoLightbox = null;
+
+/** Abre a foto ampliada e leva o foco do teclado para o botão de fechar. */
+function abrirLightbox(src, origem) {
+  elementoComFocoAntesDoLightbox = origem || document.activeElement;
   document.getElementById('lightbox-imagem').src = src;
   document.getElementById('lightbox').classList.add('aberto');
+  document.getElementById('lightbox-fechar').focus();
 }
 
+/** Fecha a foto ampliada e devolve o foco ao elemento que a abriu. */
 function fecharLightbox() {
-  document.getElementById('lightbox').classList.remove('aberto');
+  const lightbox = document.getElementById('lightbox');
+  if (!lightbox.classList.contains('aberto')) return;
+
+  lightbox.classList.remove('aberto');
+  if (elementoComFocoAntesDoLightbox && elementoComFocoAntesDoLightbox.focus) {
+    elementoComFocoAntesDoLightbox.focus();
+  }
 }
 
 document.addEventListener('keydown', (e) => {
+  const lightboxAberto = document.getElementById('lightbox').classList.contains('aberto');
+
   if (e.key === 'Escape') fecharLightbox();
+
+  // Enquanto a foto está aberta, o Tab não sai da janela (só existe o botão de fechar)
+  if (e.key === 'Tab' && lightboxAberto) {
+    e.preventDefault();
+    document.getElementById('lightbox-fechar').focus();
+  }
 });
 
 // Cliques dentro da lista de registros: apoiar e ampliar foto
@@ -724,11 +753,14 @@ document.getElementById('lista-registros').addEventListener('click', (evento) =>
   if (!alvo) return;
 
   if (alvo.dataset.acao === 'apoiar')  apoiarRegistro(alvo.dataset.id);
-  if (alvo.dataset.acao === 'ampliar') abrirLightbox(alvo.getAttribute('src'));
+  if (alvo.dataset.acao === 'ampliar') {
+    const imagem = alvo.querySelector('img');
+    if (imagem) abrirLightbox(imagem.getAttribute('src'), alvo);
+  }
 });
 
 
-/*
+/* 
    RENDERIZAÇÃO DO FEED
 */
 
@@ -740,7 +772,7 @@ function montarAvisoStatus() {
     'indisponivel':    'Não foi possível carregar o Firebase. Verifique a conexão com a internet e recarregue a página.',
     'erro':            'Não foi possível carregar os registros. Verifique a conexão e as regras do Firestore.'
   };
-  return `<div class="aviso-status">${mensagens[statusFirebase] || mensagens['erro']}</div>`;
+  return `<div class="aviso-status" role="status">${mensagens[statusFirebase] || mensagens['erro']}</div>`;
 }
 
 /** Desenha os cards de registro respeitando o filtro ativo. */
@@ -774,14 +806,17 @@ function renderizarFeed() {
       : '';
 
     const tagsCat = registro.cats
-      .map(c => `<span class="tag-categoria">${ROTULOS_CATEGORIA[c]}</span>`)
+      .map(c => `<span class="tag-categoria"><span aria-hidden="true">${ROTULOS_CATEGORIA[c].icone}</span> ${ROTULOS_CATEGORIA[c].texto}</span>`)
       .join('');
 
     // As fotos já passaram pela validação em normalizarRegistro()
     const htmlFotos = registro.fotos.length > 0
       ? `<div class="registro-fotos">
-           ${registro.fotos.map(src =>
-             `<img class="foto-registro" src="${src}" alt="Foto anexada ao registro" data-acao="ampliar" />`
+           ${registro.fotos.map((src, i) =>
+             `<button type="button" class="btn-foto" data-acao="ampliar"
+                      aria-label="Ampliar foto ${i + 1} de ${registro.fotos.length}: ${escaparHtml(registro.titulo)}">
+                <img class="foto-registro" src="${src}" alt="" />
+              </button>`
            ).join('')}
          </div>`
       : '';
@@ -789,7 +824,8 @@ function renderizarFeed() {
     const linkMapa = (registro.lat !== null && registro.lng !== null)
       ? `<a class="link-ver-mapa"
             href="https://www.openstreetmap.org/?mlat=${registro.lat}&mlon=${registro.lng}#map=17/${registro.lat}/${registro.lng}"
-            target="_blank" rel="noopener">🗺️ Ver no mapa</a>`
+            target="_blank" rel="noopener"
+            aria-label="Ver no mapa: ${escaparHtml(registro.titulo)} (abre em nova aba)"><span aria-hidden="true">🗺️</span> Ver no mapa</a>`
       : '';
 
     return `
@@ -797,7 +833,7 @@ function renderizarFeed() {
 
         <div class="registro-topo">
           <span class="badge-tipo ${registro.tipo === 'sugestao' ? 'badge-tipo--sugestao' : 'badge-tipo--denuncia'}">
-            ${registro.tipo === 'sugestao' ? '💡 Sugestão' : '🚨 Denúncia'}
+            <span aria-hidden="true">${registro.tipo === 'sugestao' ? '💡' : '🚨'}</span> ${registro.tipo === 'sugestao' ? 'Sugestão' : 'Denúncia'}
           </span>
           <span class="registro-meta">${escaparHtml(registro.autor)}${dataFmt ? ' · ' + dataFmt : ''}</span>
         </div>
@@ -811,13 +847,14 @@ function renderizarFeed() {
         ${linkMapa}
 
         <div class="registro-rodape">
-          <span class="registro-local">📍 ${escaparHtml(registro.bairro)}</span>
+          <span class="registro-local"><span aria-hidden="true">📍</span> ${escaparHtml(registro.bairro)}</span>
           <div class="area-votos">
             <button class="btn-apoiar ${apoiado ? 'apoiado' : ''}"
                     data-acao="apoiar"
                     data-id="${escaparHtml(registro.id)}"
+                    aria-label="${apoiado ? 'Apoiado' : 'Apoiar'}: ${escaparHtml(registro.titulo)}. Total de apoios: ${registro.votos}"
                     ${apoiado ? 'disabled' : ''}>
-              👍 ${apoiado ? 'Apoiado' : 'Apoiar'} <strong>${registro.votos}</strong>
+              <span aria-hidden="true">👍</span> ${apoiado ? 'Apoiado' : 'Apoiar'} <strong>${registro.votos}</strong>
             </button>
           </div>
         </div>
@@ -827,7 +864,7 @@ function renderizarFeed() {
 }
 
 
-/*
+/* 
    ESTATÍSTICAS E CONTADORES
 */
 
@@ -873,7 +910,7 @@ function renderizarTudo() {
 }
 
 
-/*
+/* 
    TOAST E FUNÇÕES AUXILIARES
 */
 
@@ -897,7 +934,7 @@ function escaparHtml(texto) {
 }
 
 
-/*
+/* 
    INICIALIZAÇÃO
 */
 
